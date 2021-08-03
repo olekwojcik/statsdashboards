@@ -38,6 +38,10 @@ menu_geometric <- menuItem("Geometric",
 menu_negativebinom <- menuItem("Negative Binomial",
                                 tabName = "negativebinom",
                                 icon = icon("check-double"))
+
+menu_poisson <- menuItem("Poisson",
+                         tabName = "poisson",
+                         icon = icon("bus"))
  
 #create sidebar
 sidebar <- dashboardSidebar(sidebarMenu(menu_welcome,
@@ -45,7 +49,8 @@ sidebar <- dashboardSidebar(sidebarMenu(menu_welcome,
                                         menu_binomial,
                                         menu_hypergeom,
                                         menu_geometric,
-                                        menu_negativebinom))
+                                        menu_negativebinom,
+                                        menu_poisson))
 
 #tab items
 
@@ -275,16 +280,16 @@ server <- function(input, output){
   #PMF plot
   
   binomial_reactive <- reactive({
-    p <- input$slider_binomial_p
-    n <- input$slider_binomial_n
+    p_slider <- input$slider_binomial_p
+    n_slider <- input$slider_binomial_n
     
-    data.frame(result = 1:9) %>%
+    data.frame(result = 0:9) %>%
       mutate(p = dbinom(x = result,
-                        size = n,
-                        prob = p)) %>%
+                        size = n_slider,
+                        prob = p_slider)) %>%
       mutate(d = pbinom(q = result,
-                        size = n,
-                        prob = p)) %>%
+                        size = n_slider,
+                        prob = p_slider)) %>%
       mutate(result = as.character(result))
   })
   
@@ -327,13 +332,13 @@ server <- function(input, output){
   binomial_random_reactive <- reactive({
     input$binomial_random_button
     
-    p <- input$slider_binomial_p
+    p_slider <- input$slider_binomial_p
     
-    n <- input$slider_binomial_n
+    n_slider <- input$slider_binomial_n
     
     rbinom(n = 5,
-           size = n,
-           prob = p)
+           size = n_slider,
+           prob = p_slider)
   })
   
   output$binomial_random_output <- renderPrint(binomial_random_reactive())
@@ -344,19 +349,19 @@ server <- function(input, output){
   #PMF plot
   
   hypergeom_reactive <- reactive({
-    w <- input$slider_hypergeom_w
-    b <- input$slider_hypergeom_b
-    n <- input$slider_hypergeom_n
+    w_slider <- input$slider_hypergeom_w
+    b_slider <- input$slider_hypergeom_b
+    n_slider <- input$slider_hypergeom_n
     
-    data.frame(result = 1:9) %>%
+    data.frame(result = 0:9) %>%
       mutate(p = dhyper(x = result,
-                        m = w,
-                        n = b,
-                        k = n)) %>%
+                        m = w_slider,
+                        n = b_slider,
+                        k = n_slider)) %>%
       mutate(d = phyper(q = result,
-                        m = w,
-                        n = b,
-                        k = n)) %>%
+                        m = w_slider,
+                        n = b_slider,
+                        k = n_slider)) %>%
       mutate(result = as.character(result))
   })
   
@@ -399,14 +404,14 @@ server <- function(input, output){
   hypergeom_random_reactive <- reactive({
     input$hypergeom_random_button
     
-    w <- input$slider_hypergeom_w
-    b <- input$slider_hypergeom_b
-    n <- input$slider_hypergeom_n
+    w_slider <- input$slider_hypergeom_w
+    b_slider <- input$slider_hypergeom_b
+    n_slider <- input$slider_hypergeom_n
     
     rhyper(nn = 5,
-           m = w,
-           n = b,
-           k = n)
+           m = w_slider,
+           n = b_slider,
+           k = n_slider)
   })
   
   output$hypergeom_random_output <- renderPrint(hypergeom_random_reactive())
@@ -416,13 +421,13 @@ server <- function(input, output){
   #PMF plot
   
   geometric_reactive <- reactive({
-    p <- input$slider_geometric_p
+    p_slider <- input$slider_geometric_p
     
     data.frame(result = 0:9) %>%
       mutate(p = dgeom(x = result,
-                       prob = p)) %>%
+                       prob = p_slider)) %>%
       mutate(d = pgeom(q = result,
-                       prob = p)) %>%
+                       prob = p_slider)) %>%
       mutate(result = as.character(result))
   })
   
@@ -465,10 +470,10 @@ server <- function(input, output){
   geometric_random_reactive <- reactive({
     input$geometric_random_button
     
-    p <- input$slider_geometric_p
+    p_slider <- input$slider_geometric_p
     
     rgeom(n = 5,
-           prob = p)
+          prob = p_slider)
   })
   
   output$geometric_random_output <- renderPrint(geometric_random_reactive())
@@ -478,16 +483,16 @@ server <- function(input, output){
   #PMF plot
   
   negativebinom_reactive <- reactive({
-    r <- input$slider_negativebinom_r
-    p <- input$slider_negativebinom_p
+    r_slider <- input$slider_negativebinom_r
+    p_slider <- input$slider_negativebinom_p
     
     data.frame(result = 0:9) %>%
       mutate(p = dnbinom(x = result,
-                         size = r,
-                         prob = p)) %>%
+                         size = r_slider,
+                         prob = p_slider)) %>%
       mutate(d = pnbinom(q = result,
-                         size = r,
-                         prob = p)) %>%
+                         size = r_slider,
+                         prob = p_slider)) %>%
       mutate(result = as.character(result))
   })
   
@@ -530,12 +535,12 @@ server <- function(input, output){
   negativebinom_random_reactive <- reactive({
     input$negativebinom_random_button
     
-    r <- input$slider_negativebinom_r
-    p <- input$slider_negativebinom_p
+    r_slider <- input$slider_negativebinom_r
+    p_slider <- input$slider_negativebinom_p
     
     rnbinom(n = 5,
-            prob = p,
-            size = r)
+            prob = p_slider,
+            size = r_slider)
   })
   
   output$negativebinom_random_output <- renderPrint(negativebinom_random_reactive())
