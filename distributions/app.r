@@ -37,7 +37,7 @@ menu_geometric <- menuItem("Geometric",
 
 menu_negativebinom <- menuItem("Negative Binomial",
                                 tabName = "negativebinom",
-                                icon = icon("check-circle"))
+                                icon = icon("check-double"))
  
 #create sidebar
 sidebar <- dashboardSidebar(sidebarMenu(menu_welcome,
@@ -51,7 +51,7 @@ sidebar <- dashboardSidebar(sidebarMenu(menu_welcome,
 
 #welcome
 tab_item_welcome <-tabItem(tabName = "welcome",
-                           h2("tab 1"),
+                           h2("Hello"),
                            h2("hi")
                            )
 
@@ -185,12 +185,12 @@ tab_item_negativebinom <-tabItem(tabName = "negativebinom",
                              fluidRow(
                                box(withMathJax(),
                                    helpText("If \\(X\\) is a random variable with a Negative Binomial distribution, then the PMF
-                                        of \\(X\\) is \\( P(X = k) = \\binom{n + r - 1}{r - 1}p^r (1 - p)^n")),
+                                        of \\(X\\) is \\( P(X = k) = \\binom{n + r - 1}{r - 1}p^r (1 - p)^n \\)")),
                                box(
                                  sliderInput(inputId = "slider_negativebinom_r",
                                              label = helpText("\\(r\\)"),
                                              min = 0, max = 10,
-                                             value = 5,
+                                             value = 2,
                                              step = 1),
                                  sliderInput(inputId = "slider_negativebinom_p",
                                              label = helpText("\\(p\\)"),
