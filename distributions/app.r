@@ -216,13 +216,41 @@ tab_item_negativebinom <-tabItem(tabName = "negativebinom",
                              )
 )
 
+#geometric
+tab_item_poisson <-tabItem(tabName = "poisson",
+                             h2("Poisson"),
+                             fluidRow(
+                               box(withMathJax(),
+                                   helpText("If \\(X\\) is a random variable with a Poisson distribution, then the PMF
+                                        of \\(X\\) is \\( P(X = k) = ")),
+                               box(
+                                 sliderInput(inputId = "slider_poisson_lambda",
+                                             label = helpText("\\(\\lambda\\)"),
+                                             min = 0, max = 9,
+                                             value = 2,
+                                             step = 1)
+                               )
+                             ),
+                             fluidRow(
+                               box(plotlyOutput("plotly_poisson_PMF", height = 250)),
+                               box(plotlyOutput("plotly_poisson_CDF", height = 250))
+                             ),
+                             fluidRow(
+                               box(actionButton("poisson_random_button",
+                                                label = "Generate Random Values!"),
+                                   hr(),
+                                   verbatimTextOutput("poisson_random_output"))
+                             )
+)
+
 #create body
 body <- dashboardBody(tabItems(tab_item_welcome,
                                tab_item_bernoulli,
                                tab_item_binomial,
                                tab_item_hypergeom,
                                tab_item_geometric,
-                               tab_item_negativebinom))
+                               tab_item_negativebinom,
+                               tab_item_poisson))
 
 #create ui
 ui <- dashboardPage(
@@ -544,6 +572,68 @@ server <- function(input, output){
   })
   
   output$negativebinom_random_output <- renderPrint(negativebinom_random_reactive())
+  
+  #POISSON
+  
+  #PMF plot
+  
+  poisson_reactive <- reactive({
+    lambda_slider <- input$slider_poisson_lambda
+    
+    data.frame(result = 0:9) %>%
+      mutate(p = dpois(x = result,
+                       lambda = lambda_slider)) %>%
+      mutate(d = ppois(q = result,
+                       lambda = lambda_slider)) %>%
+      mutate(result = as.character(result))
+  })
+  
+  output$plotly_poisson_PMF <- renderPlotly(
+    plot_ly(poisson_reactive(),
+            y = ~p,
+            x = ~result,
+            type = "bar",
+            text = ~round(p, digits = 2),
+            textposition = "outside",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Poisson PMF",
+        yaxis = list(range = c(0, 1),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #CDF plot
+  
+  output$plotly_poisson_CDF <- renderPlotly(
+    plot_ly(poisson_reactive(),
+            y = ~d,
+            x = ~result,
+            type = "bar",
+            text = ~round(d, digits = 2),
+            textposition = "outside",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Poisson CDF",
+        yaxis = list(range = c(0, 2),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #random values
+  
+  poisson_random_reactive <- reactive({
+    input$poisson_random_button
+    
+    lambda_slider <- input$slider_poisson_lambda
+    
+    rpois(n = 5,
+          lambda = lambda_slider)
+  })
+  
+  output$poisson_random_output <- renderPrint(poisson_random_reactive())
 }
 
 
