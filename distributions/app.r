@@ -221,7 +221,7 @@ body <- dashboardBody(tabItems(tab_item_welcome,
 
 #create ui
 ui <- dashboardPage(
-  dashboardHeader(title = "Simple tabs"),
+  dashboardHeader(title = "Distributions"),
   sidebar,
   body
 )
