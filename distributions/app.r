@@ -242,7 +242,8 @@ tab_item_poisson <-tabItem(tabName = "poisson",
                              fluidRow(
                                box(withMathJax(),
                                    helpText("If \\(X\\) is a random variable with a Poisson distribution, then the PMF
-                                        of \\(X\\) is \\( P(X = k) = ")),
+                                        of \\(X\\) is \\( P(X = k) = \\frac{e^{- \\lambda} \\lambda^k}
+                                            {k!}, k = 0, 1, 2, 3...\\) with \\(\\lambda > 0\\)")),
                                box(
                                  sliderInput(inputId = "slider_poisson_lambda",
                                              label = helpText("\\(\\lambda\\)"),
@@ -268,8 +269,9 @@ tab_item_normal <-tabItem(tabName = "normal",
                             h2("Normal"),
                             fluidRow(
                               box(withMathJax(),
-                                  helpText("If \\(X\\) is a random variable with a Normal distribution, then the PDF
-                                        of \\(X\\) is \\( P(X = k) = ")),
+                                  helpText("If \\(Z\\) is a continuous random variable with a Normal distribution, then 
+                                  the PDF of \\(Z\\) is \\( \\varphi (z) = \\frac{1}{\\sqrt{2 \\pi}}
+                                           e^{\\frac{- z^2}{2}}\\) for \\( - \\infty < z < \\infty \\)")),
                               box(
                                 sliderInput(inputId = "slider_normal_mu",
                                             label = helpText("\\(\\mu\\)"),
@@ -278,7 +280,7 @@ tab_item_normal <-tabItem(tabName = "normal",
                                             step = 0.5),
                                 sliderInput(inputId = "slider_normal_sigma",
                                             label = helpText("\\(\\sigma^2\\)"),
-                                            min = 1, max = 3,
+                                            min = 0, max = 3,
                                             value = 1,
                                             step = 0.5)
                               )
@@ -301,10 +303,10 @@ tab_item_exponential <-tabItem(tabName = "exponential",
                           fluidRow(
                             box(withMathJax(),
                                 helpText("If \\(X\\) is a random variable with an Exponential distribution, then the PDF
-                                        of \\(X\\) is \\( P(X = k) = ")),
+                                        of \\(X\\) is \\( f(x) = \\lambda e ^{- \\lambda x} \\)")),
                             box(
                               sliderInput(inputId = "slider_exponential_lambda",
-                                          label = helpText("\\(\\mu\\)"),
+                                          label = helpText("\\(\\lambda\\)"),
                                           min = 0, max = 3,
                                           value = 1,
                                           step = 0.25)
@@ -328,7 +330,8 @@ tab_item_beta <-tabItem(tabName = "beta",
                          fluidRow(
                            box(withMathJax(),
                                helpText("If \\(X\\) is a random variable with a Beta distribution, then the PDF
-                                        of \\(X\\) is \\( P(X = k) = ")),
+                                        of \\(X\\) is \\( f(x) = \\frac{1}{\\beta (a, b)} x^{a - 1} 
+                                        (1 - x)^{b - 1} \\) with \\( 0 < x < 1, a > 0, b > 0\\)")),
                            box(
                              sliderInput(inputId = "slider_beta_a",
                                          label = helpText("\\(a\\)"),
@@ -360,7 +363,8 @@ tab_item_gamma <-tabItem(tabName = "gamma",
                           fluidRow(
                             box(withMathJax(),
                                 helpText("If \\(X\\) is a random variable with a Gamma distribution, then the PDF
-                                        of \\(X\\) is \\( P(X = k) = ")),
+                                        of \\(X\\) is \\( f(y) = \\frac{1}{\\Gamma(a)} (\\lambda y^a e^{- \\lambda y}
+                                         \\frac{1}{y} \\) with \\( y > 0, a > 0, \\lambda > 0")),
                             box(
                               sliderInput(inputId = "slider_gamma_a",
                                           label = helpText("\\(\\mu\\)"),
