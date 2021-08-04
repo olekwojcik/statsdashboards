@@ -326,7 +326,7 @@ tab_item_exponential <-tabItem(tabName = "exponential",
 
 #beta
 tab_item_beta <-tabItem(tabName = "beta",
-                         h2("beta"),
+                         h2("Beta"),
                          fluidRow(
                            box(withMathJax(),
                                helpText("If \\(X\\) is a random variable with a Beta distribution, then the PDF
@@ -364,7 +364,7 @@ tab_item_gamma <-tabItem(tabName = "gamma",
                             box(withMathJax(),
                                 helpText("If \\(X\\) is a random variable with a Gamma distribution, then the PDF
                                         of \\(X\\) is \\( f(y) = \\frac{1}{\\Gamma(a)} (\\lambda y^a e^{- \\lambda y}
-                                         \\frac{1}{y} \\) with \\( y > 0, a > 0, \\lambda > 0")),
+                                         \\frac{1}{y} \\) with \\( y > 0, a > 0, \\lambda > 0 \\)")),
                             box(
                               sliderInput(inputId = "slider_gamma_a",
                                           label = helpText("\\(\\mu\\)"),
