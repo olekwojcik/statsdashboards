@@ -42,6 +42,10 @@ menu_negativebinom <- menuItem("Negative Binomial",
 menu_poisson <- menuItem("Poisson",
                          tabName = "poisson",
                          icon = icon("bus"))
+
+menu_normal <- menuItem("Normal",
+                        tabName = "normal",
+                        icon = icon("meh"))
  
 #create sidebar
 sidebar <- dashboardSidebar(sidebarMenu(menu_welcome,
@@ -50,7 +54,8 @@ sidebar <- dashboardSidebar(sidebarMenu(menu_welcome,
                                         menu_hypergeom,
                                         menu_geometric,
                                         menu_negativebinom,
-                                        menu_poisson))
+                                        menu_poisson,
+                                        menu_normal))
 
 #tab items
 
@@ -243,6 +248,38 @@ tab_item_poisson <-tabItem(tabName = "poisson",
                              )
 )
 
+#binomial
+tab_item_normal <-tabItem(tabName = "normal",
+                            h2("normal"),
+                            fluidRow(
+                              box(withMathJax(),
+                                  helpText("If \\(X\\) is a random variable with a Normal distribution, then the PDF
+                                        of \\(X\\) is \\( P(X = k) = ")),
+                              box(
+                                sliderInput(inputId = "slider_normal_mu",
+                                            label = helpText("\\(\\mu\\)"),
+                                            min = -5, max = 5,
+                                            value = 0,
+                                            step = 0.5),
+                                sliderInput(inputId = "slider_normal_sigma",
+                                            label = helpText("\\(\\sigma^2\\)"),
+                                            min = 1, max = 3,
+                                            value = 1,
+                                            step = 0.5)
+                              )
+                            ),
+                            fluidRow(
+                              box(plotlyOutput("plotly_normal_PDF", height = 250)),
+                              box(plotlyOutput("plotly_normal_CDF", height = 250))
+                            ),
+                            fluidRow(
+                              box(actionButton("normal_random_button",
+                                               label = "Generate Random Values!"),
+                                  hr(),
+                                  verbatimTextOutput("normal_random_output"))
+                            )
+)
+
 #create body
 body <- dashboardBody(tabItems(tab_item_welcome,
                                tab_item_bernoulli,
@@ -250,7 +287,8 @@ body <- dashboardBody(tabItems(tab_item_welcome,
                                tab_item_hypergeom,
                                tab_item_geometric,
                                tab_item_negativebinom,
-                               tab_item_poisson))
+                               tab_item_poisson,
+                               tab_item_normal))
 
 #create ui
 ui <- dashboardPage(
@@ -634,6 +672,72 @@ server <- function(input, output){
   })
   
   output$poisson_random_output <- renderPrint(poisson_random_reactive())
+  
+  #NORMAL
+  
+  #PDF plot
+  
+  normal_reactive <- reactive({
+    mu_slider <- input$slider_normal_mu
+    sigma_slider <- input$slider_normal_sigma
+    
+    data.frame(result = seq(from = -6, to = 6, by = 0.01)) %>%
+      mutate(p = dnorm(x = result,
+                       mean = mu_slider,
+                       sd = sqrt(sigma_slider))) %>%
+      mutate(d = pnorm(q = result,
+                       mean = mu_slider,
+                       sd = sqrt(sigma_slider)))
+  })
+  
+  output$plotly_normal_PDF <- renderPlotly(
+    plot_ly(normal_reactive(),
+            y = ~p,
+            x = ~result,
+            type = "scatter",
+            mode = "lines",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Binomial PMF",
+        yaxis = list(range = c(0, 1),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #CDF plot
+  
+  output$plotly_normal_CDF <- renderPlotly(
+    plot_ly(normal_reactive(),
+            y = ~d,
+            x = ~result,
+            type = "scatter",
+            mode = "lines",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Binomial CDF",
+        yaxis = list(range = c(0, 2),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #random values
+  
+  normal_random_reactive <- reactive({
+    input$normal_random_button
+    
+    mu_slider <- input$slider_normal_mu
+    
+    sigma_slider <- input$slider_normal_sigma
+    
+    rnorm(n = 5,
+          mean = mu_slider,
+          sd = sqrt(sigma_slider))
+  })
+  
+  output$normal_random_output <- renderPrint(round(normal_random_reactive(), 
+                                                   digits = 2))
 }
 
 
