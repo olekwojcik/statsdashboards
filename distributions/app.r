@@ -17,7 +17,7 @@ library(shiny)
 #menu items
 menu_welcome <- menuItem("Welcome!",
                           tabName = "welcome",
-                          icon = icon("smile-beam"))
+                          icon = icon("star"))
 
 menu_bernoulli <- menuItem("Bernoulli",
                           tabName = "bernoulli",
@@ -41,11 +41,23 @@ menu_negativebinom <- menuItem("Negative Binomial",
 
 menu_poisson <- menuItem("Poisson",
                          tabName = "poisson",
-                         icon = icon("bus"))
+                         icon = icon("tint"))
 
 menu_normal <- menuItem("Normal",
                         tabName = "normal",
                         icon = icon("meh"))
+
+menu_exponential <- menuItem("Exponential",
+                             tabName = "exponential",
+                             icon = icon("bus"))
+
+menu_beta <- menuItem("Beta",
+                      tabName = "beta",
+                      icon = icon("signature"))
+
+menu_gamma <- menuItem("Gamma",
+                       tabName = "gamma",
+                       icon = icon("react"))
  
 #create sidebar
 sidebar <- dashboardSidebar(sidebarMenu(menu_welcome,
@@ -55,7 +67,10 @@ sidebar <- dashboardSidebar(sidebarMenu(menu_welcome,
                                         menu_geometric,
                                         menu_negativebinom,
                                         menu_poisson,
-                                        menu_normal))
+                                        menu_normal,
+                                        menu_exponential,
+                                        menu_beta,
+                                        menu_gamma))
 
 #tab items
 
@@ -248,9 +263,9 @@ tab_item_poisson <-tabItem(tabName = "poisson",
                              )
 )
 
-#binomial
+#normal
 tab_item_normal <-tabItem(tabName = "normal",
-                            h2("normal"),
+                            h2("Normal"),
                             fluidRow(
                               box(withMathJax(),
                                   helpText("If \\(X\\) is a random variable with a Normal distribution, then the PDF
@@ -280,6 +295,97 @@ tab_item_normal <-tabItem(tabName = "normal",
                             )
 )
 
+#exponential
+tab_item_exponential <-tabItem(tabName = "exponential",
+                          h2("Exponential"),
+                          fluidRow(
+                            box(withMathJax(),
+                                helpText("If \\(X\\) is a random variable with an Exponential distribution, then the PDF
+                                        of \\(X\\) is \\( P(X = k) = ")),
+                            box(
+                              sliderInput(inputId = "slider_exponential_lambda",
+                                          label = helpText("\\(\\mu\\)"),
+                                          min = 0, max = 3,
+                                          value = 1,
+                                          step = 0.25)
+                            )
+                          ),
+                          fluidRow(
+                            box(plotlyOutput("plotly_exponential_PDF", height = 250)),
+                            box(plotlyOutput("plotly_exponential_CDF", height = 250))
+                          ),
+                          fluidRow(
+                            box(actionButton("exponential_random_button",
+                                             label = "Generate Random Values!"),
+                                hr(),
+                                verbatimTextOutput("exponential_random_output"))
+                          )
+)
+
+#beta
+tab_item_beta <-tabItem(tabName = "beta",
+                         h2("beta"),
+                         fluidRow(
+                           box(withMathJax(),
+                               helpText("If \\(X\\) is a random variable with a Beta distribution, then the PDF
+                                        of \\(X\\) is \\( P(X = k) = ")),
+                           box(
+                             sliderInput(inputId = "slider_beta_a",
+                                         label = helpText("\\(a\\)"),
+                                         min = 0, max = 5,
+                                         value = 2,
+                                         step = 0.5),
+                             sliderInput(inputId = "slider_beta_b",
+                                         label = helpText("\\(b\\)"),
+                                         min = 0, max = 5,
+                                         value = 2,
+                                         step = 0.5)
+                           )
+                         ),
+                         fluidRow(
+                           box(plotlyOutput("plotly_beta_PDF", height = 250)),
+                           box(plotlyOutput("plotly_beta_CDF", height = 250))
+                         ),
+                         fluidRow(
+                           box(actionButton("beta_random_button",
+                                            label = "Generate Random Values!"),
+                               hr(),
+                               verbatimTextOutput("beta_random_output"))
+                         )
+)
+
+#gamma
+tab_item_gamma <-tabItem(tabName = "gamma",
+                          h2("Gamma"),
+                          fluidRow(
+                            box(withMathJax(),
+                                helpText("If \\(X\\) is a random variable with a Gamma distribution, then the PDF
+                                        of \\(X\\) is \\( P(X = k) = ")),
+                            box(
+                              sliderInput(inputId = "slider_gamma_a",
+                                          label = helpText("\\(\\mu\\)"),
+                                          min = 0, max = 5,
+                                          value = 1,
+                                          step = 0.5),
+                              sliderInput(inputId = "slider_gamma_lambda",
+                                          label = helpText("\\(\\sigma^2\\)"),
+                                          min = 0, max = 5,
+                                          value = 1,
+                                          step = 0.5)
+                            )
+                          ),
+                          fluidRow(
+                            box(plotlyOutput("plotly_gamma_PDF", height = 250)),
+                            box(plotlyOutput("plotly_gamma_CDF", height = 250))
+                          ),
+                          fluidRow(
+                            box(actionButton("gamma_random_button",
+                                             label = "Generate Random Values!"),
+                                hr(),
+                                verbatimTextOutput("gamma_random_output"))
+                          )
+)
+
 #create body
 body <- dashboardBody(tabItems(tab_item_welcome,
                                tab_item_bernoulli,
@@ -288,7 +394,10 @@ body <- dashboardBody(tabItems(tab_item_welcome,
                                tab_item_geometric,
                                tab_item_negativebinom,
                                tab_item_poisson,
-                               tab_item_normal))
+                               tab_item_normal,
+                               tab_item_exponential,
+                               tab_item_beta,
+                               tab_item_gamma))
 
 #create ui
 ui <- dashboardPage(
@@ -321,7 +430,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Bernoulli PMF",
-        yaxis = list(range = c(0, 1),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -369,7 +478,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Binomial PMF",
-        yaxis = list(range = c(0, 1),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -387,7 +496,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Binomial CDF",
-        yaxis = list(range = c(0, 2),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -441,7 +550,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Hypergeometric PMF",
-        yaxis = list(range = c(0, 1),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -459,7 +568,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Hypergeometric CDF",
-        yaxis = list(range = c(0, 2),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -507,7 +616,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Geometric PMF",
-        yaxis = list(range = c(0, 1),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -525,7 +634,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Geometric CDF",
-        yaxis = list(range = c(0, 2),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -572,7 +681,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Negative Binomial PMF",
-        yaxis = list(range = c(0, 1),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -590,7 +699,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Negative Binomial CDF",
-        yaxis = list(range = c(0, 2),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -636,7 +745,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Poisson PMF",
-        yaxis = list(range = c(0, 1),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -654,7 +763,7 @@ server <- function(input, output){
             color = I("lightsteelblue")) %>%
       layout(
         title = "Poisson CDF",
-        yaxis = list(range = c(0, 2),
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -698,8 +807,8 @@ server <- function(input, output){
             mode = "lines",
             color = I("lightsteelblue")) %>%
       layout(
-        title = "Binomial PMF",
-        yaxis = list(range = c(0, 1),
+        title = "Normal PDF",
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -715,8 +824,8 @@ server <- function(input, output){
             mode = "lines",
             color = I("lightsteelblue")) %>%
       layout(
-        title = "Binomial CDF",
-        yaxis = list(range = c(0, 2),
+        title = "Normal CDF",
+        yaxis = list(range = c(0, 1.1),
                      title = ""),
         xaxis = list(title = "")
       )
@@ -737,6 +846,197 @@ server <- function(input, output){
   })
   
   output$normal_random_output <- renderPrint(round(normal_random_reactive(), 
+                                                   digits = 2))
+  
+  
+  #EXPONENTIAL
+  
+  #PDF plot
+  
+  exponential_reactive <- reactive({
+    lambda_slider <- input$slider_exponential_lambda
+    
+    data.frame(result = seq(from = 0, to = 9, by = 0.01)) %>%
+      mutate(p = dexp(x = result,
+                      rate = lambda_slider)) %>%
+      mutate(d = pexp(q = result,
+                      rate = lambda_slider))
+  })
+  
+  output$plotly_exponential_PDF <- renderPlotly(
+    plot_ly(exponential_reactive(),
+            y = ~p,
+            x = ~result,
+            type = "scatter",
+            mode = "lines",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Exponential PDF",
+        yaxis = list(range = c(0, 1.1),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #CDF plot
+  
+  output$plotly_exponential_CDF <- renderPlotly(
+    plot_ly(exponential_reactive(),
+            y = ~d,
+            x = ~result,
+            type = "scatter",
+            mode = "lines",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Exponential CDF",
+        yaxis = list(range = c(0, 1.1),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #random values
+  
+  exponential_random_reactive <- reactive({
+    input$exponential_random_button
+    
+    lambda_slider <- input$slider_exponential_lambda
+    
+    rexp(n = 5,
+         rate = lambda_slider)
+  })
+  
+  output$exponential_random_output <- renderPrint(round(exponential_random_reactive(),
+                                                       digits = 2))
+  
+  #BETA
+  
+  #PDF plot
+  
+  beta_reactive <- reactive({
+    a_slider <- input$slider_beta_a
+    b_slider <- input$slider_beta_b
+    
+    data.frame(result = seq(from = 0, to = 1, by = 0.01)) %>%
+      mutate(p = dbeta(x = result,
+                       shape1 = a_slider,
+                       shape2 = b_slider)) %>%
+      mutate(d = pbeta(q = result,
+                       shape1 = a_slider,
+                       shape2 = b_slider))
+  })
+  
+  output$plotly_beta_PDF <- renderPlotly(
+    plot_ly(beta_reactive(),
+            y = ~p,
+            x = ~result,
+            type = "scatter",
+            mode = "lines",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Beta PDF",
+        yaxis = list(range = c(0, 5),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #CDF plot
+  
+  output$plotly_beta_CDF <- renderPlotly(
+    plot_ly(beta_reactive(),
+            y = ~d,
+            x = ~result,
+            type = "scatter",
+            mode = "lines",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Beta CDF",
+        yaxis = list(range = c(0, 1),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #random values
+  
+  beta_random_reactive <- reactive({
+    input$beta_random_button
+    
+    a_slider <- input$slider_beta_a
+    b_slider <- input$slider_beta_b
+    
+    rbeta(n = 5,
+          shape1 = a_slider,
+          shape2 = b_slider)
+  })
+  
+  output$beta_random_output <- renderPrint(round(beta_random_reactive(), 
+                                                 digits = 2))
+  
+  #GAMMA
+  
+  #PDF plot
+  
+  gamma_reactive <- reactive({
+    a_slider <- input$slider_gamma_a
+    lambda_slider <- input$slider_gamma_lambda
+    
+    data.frame(result = seq(from = 0, to = 9, by = 0.01)) %>%
+      mutate(p = dgamma(x = result,
+                        shape = a_slider,
+                        scale = lambda_slider)) %>%
+      mutate(d = pgamma(q = result,
+                        shape = a_slider,
+                        scale = lambda_slider))
+  })
+  
+  output$plotly_gamma_PDF <- renderPlotly(
+    plot_ly(gamma_reactive(),
+            y = ~p,
+            x = ~result,
+            type = "scatter",
+            mode = "lines",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Gamma PDF",
+        yaxis = list(range = c(0, 1.1),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #CDF plot
+  
+  output$plotly_gamma_CDF <- renderPlotly(
+    plot_ly(gamma_reactive(),
+            y = ~d,
+            x = ~result,
+            type = "scatter",
+            mode = "lines",
+            color = I("lightsteelblue")) %>%
+      layout(
+        title = "Gamma CDF",
+        yaxis = list(range = c(0, 1.1),
+                     title = ""),
+        xaxis = list(title = "")
+      )
+  )
+  
+  #random values
+  
+  gamma_random_reactive <- reactive({
+    input$gamma_random_button
+    
+    a_slider <- input$slider_gamma_a
+    lambda_slider <- input$slider_gamma_lambda
+    
+    rgamma(n = 5,
+           shape = a_slider,
+           scale = lambda_slider)
+  })
+  
+  output$gamma_random_output <- renderPrint(round(gamma_random_reactive(), 
                                                    digits = 2))
 }
 
