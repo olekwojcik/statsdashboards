@@ -145,7 +145,7 @@ tab_item_hypergeom <-tabItem(tabName = "hypergeom",
                              h2("Hypergeometric"),
                              fluidRow(
                                box(withMathJax(),
-                               helpText("If \\(X\\) is a random variable with a Binomial distribution, then the PMF
+                               helpText("If \\(X\\) is a random variable with a Hypergeometric distribution, then the PMF
                                         of \\(X\\) is \\( P(X = k) = \\frac{\\binom{w}{k} \\binom{b}{n - k}}
                                         {\\binom{w + b}{n}}\\)")),
                                box(
