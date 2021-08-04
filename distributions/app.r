@@ -77,7 +77,7 @@ sidebar <- dashboardSidebar(sidebarMenu(menu_welcome,
 #welcome
 tab_item_welcome <-tabItem(tabName = "welcome",
                            h2("Hello, welcome to Olek's Distribution Dashboard!"),
-                           h3("Use the sideboard to pick a distribution and see its PMF/PDF, CDF, and 
+                           h3("Use the sidebar to pick a distribution and see its PMF/PDF, CDF, and 
                               generate some numbers!")
                            )
 
